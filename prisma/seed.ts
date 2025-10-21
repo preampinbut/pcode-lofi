@@ -14,28 +14,28 @@ const seedData: Prisma.ChannelCreateInput[] = [
     weight: 1,
   },
   {
-    name: "bootlet smoke",
-    key: "A_hmrykwR7g",
-    weight: 2,
-  },
-  {
     name: "college guy",
     key: "4xDzrJKXOOY",
-    weight: 3,
+    weight: 2,
   },
   {
     name: "college girl",
     key: "jfKfPfyJRdk",
-    weight: 4,
+    weight: 3,
   },
   {
     name: "sleepy girl",
     key: "28KRPhVzCus",
-    weight: 5,
+    weight: 4,
   },
   {
     name: "rural girl",
     key: "Na0w3Mz46GA",
+    weight: 5,
+  },
+  {
+    name: "coffee shop",
+    key: "UI5NKkW8acM",
     weight: 6,
   },
 ];
