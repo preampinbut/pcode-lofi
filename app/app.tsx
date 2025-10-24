@@ -326,7 +326,8 @@ export default function Home({ channelList }: Props) {
         onClick={() => setIsMenu(false)}
       />
       <div
-        className={`nav ${isMenu ? "block" : ""}`}
+        className="nav"
+        style={isMenu ? { display: "block"} : undefined}
         onClick={() => setIsMenu(false)}
       >
         <div className="title">
