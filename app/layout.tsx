@@ -15,9 +15,13 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const metadata: Metadata = {
   title: "LOFI MUSIC",
   description: "a music app",
+  icons: {
+    icon: "/images/favicon.svg",
+  },
 };
 
 export default function RootLayout({
