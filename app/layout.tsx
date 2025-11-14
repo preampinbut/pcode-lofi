@@ -20,7 +20,9 @@ export const metadata: Metadata = {
   title: "LOFI MUSIC",
   description: "a music app",
   icons: {
-    icon: "/images/favicon.svg",
+    icon: ["/favicon.ico?v=1", "/images/favicon.svg?v=1"],
+    shortcut: ["/favicon.ico?v=1", "/images/favicon.svg?v=1"],
+    apple: ["/images/icons-64.png?v=1", "/images/icons-180.png?v=1"],
   },
 };
 
