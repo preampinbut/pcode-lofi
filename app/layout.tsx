@@ -1,5 +1,4 @@
-/* eslint-disable camelcase */
-/* eslint-disable object-curly-newline */
+/* eslint-disable @stylistic/js/object-curly-newline */
 
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";

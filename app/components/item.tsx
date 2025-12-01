@@ -9,9 +9,9 @@ export default function Item({ item, current, onClick }: ItemProps) {
       onClick={() => onClick(item)}
     >
       <div className="item-content">
-        <div className="mr-[12px]">
+        <div className="mr-3">
           <svg
-            className="w-[24px] h-[24px]"
+            className="w-6 h-6"
             viewBox="0 0 48 48"
           >
             <path

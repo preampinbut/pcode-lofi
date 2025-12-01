@@ -22,12 +22,114 @@ export default function Home({ channelList }: Props) {
 
   const [currentSong, setCurrentSong] = useState(channelList[0]);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
-  const [currentVolume, setCurrentVolume] = useState(50);
+  const [isMuted, setIsMuted] = useState(
+    Boolean(Number(localStorage.getItem("isMuted") ?? false)),
+  );
+  const [currentVolume, setCurrentVolume] = useState(
+    Number(localStorage.getItem("currentVolume") ?? 50),
+  );
   const [isMenu, setIsMenu] = useState(false);
   const [isPlayButtonReady, setIsPlayButtonReady] = useState(false);
 
   const [helper, setHelper] = useState(false);
+
+  const onItemClick = (item: ItemType) => {
+    setIsPlayButtonReady(false);
+    setCurrentSong(item);
+    localStorage.setItem("currentSong", String(channelList.indexOf(item)));
+  };
+
+  const onPlayClick = () => {
+    if (!isPlayButtonReady) {
+      return;
+    }
+    setIsPlaying(!isPlaying);
+  };
+
+  const onShuffleClick = () => {
+    if (!isPlayButtonReady) {
+      return;
+    }
+
+    setIsPlayButtonReady(false);
+
+    let r = Math.floor(Math.random() * channelList.length);
+    while (currentSong === channelList[r]) {
+      r = Math.floor(Math.random() * channelList.length);
+    }
+    setCurrentSong(channelList[r]);
+    localStorage.setItem(
+      "currentSong",
+      String(channelList.indexOf(channelList[r])),
+    );
+  };
+
+  const onVolumeClick = () => {
+    if (currentVolume === 0) {
+      return;
+    }
+    const value = !isMuted;
+    localStorage.setItem("isMuted", String(Number(value)));
+    setIsMuted(value);
+  };
+
+  const _onVolumeSliderChange = (value: number) => {
+    localStorage.setItem("currentVolume", String(value));
+    localStorage.setItem("isMuted", "0");
+    if (value === 0) {
+      setIsMuted(true);
+    } else {
+      setIsMuted(false);
+    }
+    setCurrentVolume(value);
+  };
+
+  const onVolumeSliderChange = (e: ChangeEvent<HTMLInputElement>) => {
+    _onVolumeSliderChange(Number(e.currentTarget.value));
+  };
+
+  const onPlayerReady = (e: YouTubePlayer) => {
+    player.current = e;
+
+    const currentSongLocal = localStorage.getItem("currentSong");
+    setCurrentSong(channelList[Number(currentSongLocal!)]);
+
+    setAppReady(true);
+    setIsPlayButtonReady(true);
+  };
+
+  const onPlayerStateChange = (e: YouTubeEvent<number>) => {
+    if (player.current === undefined) {
+      return;
+    }
+
+    document.title = currentSong.name.toUpperCase();
+    if (!player.current) {
+      return;
+    }
+    if (isMuted) {
+      player.current.setVolume(0);
+    } else {
+      player.current.setVolume(currentVolume);
+    }
+    switch (e.data) {
+      case -1: {
+        return setIsPlayButtonReady(true);
+      }
+      case 1: {
+        setIsPlayButtonReady(true);
+        return setIsPlaying(true);
+      }
+      case 2: {
+        setIsPlayButtonReady(true);
+        return setIsPlaying(false);
+      }
+    }
+  };
+
+  const onMenuClick = () => {
+    setIsMenu(!isMenu);
+  };
 
   useEffect(() => {
     function globalEvent(event: KeyboardEvent) {
@@ -156,111 +258,6 @@ export default function Home({ channelList }: Props) {
     }
   }, [player, isMuted, currentVolume]);
 
-  useEffect(() => {
-    const currentVolumeLocal = localStorage.getItem("currentVolume");
-    setCurrentVolume(Number(currentVolumeLocal));
-    const isMutedLocal = localStorage.getItem("isMuted");
-    setIsMuted(Boolean(Number(isMutedLocal)));
-  }, [appReady]);
-
-  const onItemClick = (item: ItemType) => {
-    setIsPlayButtonReady(false);
-    setCurrentSong(item);
-    localStorage.setItem("currentSong", String(channelList.indexOf(item)));
-  };
-
-  const onPlayClick = () => {
-    if (!isPlayButtonReady) {
-      return;
-    }
-    setIsPlaying(!isPlaying);
-  };
-
-  const onShuffleClick = () => {
-    if (!isPlayButtonReady) {
-      return;
-    }
-
-    setIsPlayButtonReady(false);
-
-    let r = Math.floor(Math.random() * channelList.length);
-    while (currentSong === channelList[r]) {
-      r = Math.floor(Math.random() * channelList.length);
-    }
-    setCurrentSong(channelList[r]);
-    localStorage.setItem(
-      "currentSong",
-      String(channelList.indexOf(channelList[r])),
-    );
-  };
-
-  const onVolumeClick = () => {
-    if (currentVolume === 0) {
-      return;
-    }
-    const value = !isMuted;
-    localStorage.setItem("isMuted", String(Number(value)));
-    setIsMuted(value);
-  };
-
-  const _onVolumeSliderChange = (value: number) => {
-    localStorage.setItem("currentVolume", String(value));
-    localStorage.setItem("isMuted", "0");
-    if (value === 0) {
-      setIsMuted(true);
-    } else {
-      setIsMuted(false);
-    }
-    setCurrentVolume(value);
-  };
-
-  const onVolumeSliderChange = (e: ChangeEvent<HTMLInputElement>) => {
-    _onVolumeSliderChange(Number(e.currentTarget.value));
-  };
-
-  const onPlayerReady = (e: YouTubePlayer) => {
-    player.current = e;
-
-    const currentSongLocal = localStorage.getItem("currentSong");
-    setCurrentSong(channelList[Number(currentSongLocal!)]);
-
-    setAppReady(true);
-    setIsPlayButtonReady(true);
-  };
-
-  const onPlayerStateChange = (e: YouTubeEvent<number>) => {
-    if (player.current === undefined) {
-      return;
-    }
-
-    document.title = currentSong.name.toUpperCase();
-    if (!player.current) {
-      return;
-    }
-    if (isMuted) {
-      player.current.setVolume(0);
-    } else {
-      player.current.setVolume(currentVolume);
-    }
-    switch (e.data) {
-      case -1: {
-        return setIsPlayButtonReady(true);
-      }
-      case 1: {
-        setIsPlayButtonReady(true);
-        return setIsPlaying(true);
-      }
-      case 2: {
-        setIsPlayButtonReady(true);
-        return setIsPlaying(false);
-      }
-    }
-  };
-
-  const onMenuClick = () => {
-    setIsMenu(!isMenu);
-  };
-
   return (
     <main
       ref={(ref) => {
@@ -288,7 +285,7 @@ export default function Home({ channelList }: Props) {
             playerVars: {
               modestbranding: 1,
               disablekb: 1,
-              // eslint-disable-next-line camelcase
+
               iv_load_policy: 3,
               playsinline: 1,
               autoplay: 1,
@@ -308,7 +305,7 @@ export default function Home({ channelList }: Props) {
 
       <div className="z-20 fixed top-0 left-0 lg:hidden">
         <svg
-          className="w-[48px] h-[48px] m-[2px] hover:cursor-pointer"
+          className="w-12 h-12 m-0.5 hover:cursor-pointer"
           viewBox="0 0 48 48"
           onClick={onMenuClick}
         >

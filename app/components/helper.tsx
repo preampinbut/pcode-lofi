@@ -5,7 +5,7 @@ interface HelperProps {
 export default function Helper({ onClick }: HelperProps) {
   return (
     <section
-      className="z-[99] fixed top-0 left-0 fill bg-black opacity-90"
+      className="z-99 fixed top-0 left-0 fill bg-black opacity-90"
       onClick={onClick}
     >
       <div className="h-screen w-full flex justify-center items-center">
