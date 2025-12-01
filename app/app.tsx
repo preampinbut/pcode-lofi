@@ -15,6 +15,39 @@ import { type ItemType, type Props } from "@/app/components/types/index.types";
 import { type YouTubePlayer } from "@/app/components/types/youtubeplayer.types";
 import Helper from "@/app/components/helper";
 
+function useLocalStorage<T>(key: string, initialValue: T) {
+  const [storedValue, setStoredValue] = useState<T>(initialValue);
+
+  useEffect(() => {
+    try {
+      const item = window.localStorage.getItem(key);
+      if (item) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setStoredValue(JSON.parse(item));
+      }
+    } catch (error) {
+      console.warn(`Error reading localStorage key "${key}":`, error);
+    }
+  }, [key]);
+
+  const setValue = (value: T | ((val: T) => T)) => {
+    try {
+      const valueToStore =
+        value instanceof Function ? value(storedValue) : value;
+
+      setStoredValue(valueToStore);
+
+      if (typeof window !== "undefined") {
+        window.localStorage.setItem(key, JSON.stringify(valueToStore));
+      }
+    } catch (error) {
+      console.warn(`Error setting localStorage key "${key}":`, error);
+    }
+  };
+
+  return [storedValue, setValue] as const;
+}
+
 export default function Home({ channelList }: Props) {
   const mainRef = useRef<HTMLElement>(null);
   const player = useRef<YouTubePlayer>(null);
@@ -22,12 +55,13 @@ export default function Home({ channelList }: Props) {
 
   const [currentSong, setCurrentSong] = useState(channelList[0]);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(
-    Boolean(Number(localStorage.getItem("isMuted") ?? false)),
+
+  const [isMuted, setIsMuted] = useLocalStorage<boolean>("isMuted", false);
+  const [currentVolume, setCurrentVolume] = useLocalStorage<number>(
+    "currentVolume",
+    50,
   );
-  const [currentVolume, setCurrentVolume] = useState(
-    Number(localStorage.getItem("currentVolume") ?? 50),
-  );
+
   const [isMenu, setIsMenu] = useState(false);
   const [isPlayButtonReady, setIsPlayButtonReady] = useState(false);
 
@@ -92,7 +126,9 @@ export default function Home({ channelList }: Props) {
     player.current = e;
 
     const currentSongLocal = localStorage.getItem("currentSong");
-    setCurrentSong(channelList[Number(currentSongLocal!)]);
+    if (currentSongLocal && channelList[Number(currentSongLocal)]) {
+      setCurrentSong(channelList[Number(currentSongLocal)]);
+    }
 
     setAppReady(true);
     setIsPlayButtonReady(true);
