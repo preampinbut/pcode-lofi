@@ -9,7 +9,7 @@ FROM base AS deps
 WORKDIR /temp/prod
 
 COPY package.json bun.lock ./
-RUN bun install --frozen-lockfile
+RUN bun install
 
 # copy node_modules from temp directory
 # then copy all (non-ignored) project files into the image
