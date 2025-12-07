@@ -33,11 +33,6 @@ const seedData: Prisma.ChannelCreateInput[] = [
     key: "Na0w3Mz46GA",
     weight: 5,
   },
-  {
-    name: "coffee shop",
-    key: "UI5NKkW8acM",
-    weight: 6,
-  },
 ];
 
 const seed = async (): Promise<{
