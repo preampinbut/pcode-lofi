@@ -19,10 +19,10 @@ COPY . .
 
 # [optional] tests & build
 ARG DATABASE_URL
-
 ENV NODE_ENV=production
 ENV DATABASE_URL=$DATABASE_URL
-RUN bun run prisma generate && bun run build
+RUN bun run prisma generate
+RUN bun run build
 
 FROM base AS release
 COPY --from=build /usr/src/app/.next/standalone ./
