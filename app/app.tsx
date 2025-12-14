@@ -1,6 +1,6 @@
 "use client";
 
-import React, { type ChangeEvent, useEffect, useRef, useState } from "react";
+import { type ChangeEvent, useEffect, useRef, useState } from "react";
 import {
   menuPath,
   Play,

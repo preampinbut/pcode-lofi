@@ -1,4 +1,15 @@
-node_modules
+# directory
+.git
 .next
-.env
+generated
+node_modules
+migration
 preview
+
+# file
+prisma/seed.ts
+README.md
+.gitignore
+
+# wildcard
+.env*
